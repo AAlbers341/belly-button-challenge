@@ -49,7 +49,10 @@ function executeBar(sampleId,data){
         y: otuIds,
         text: otuLabels, // Hover text
         type: "bar",
-        orientation: "h"
+        orientation: "h",
+        marker: {
+            color: "black"
+        }
     }];
 
     // Layout for horizontal bar chart 
@@ -63,6 +66,52 @@ function executeBar(sampleId,data){
     Plotly.newPlot("bar",trace, layout)
 };
 
+// Function to create bubble chart that displays each sample selection
+function executeBubble(sampleId, data) {
+    // Find if the users selection exactly matches the ID
+    let sample = data.samples.find(sample => sample.id === sampleId);
+
+    // Trace for bubble chart
+    let trace = [{
+        x: sample.otu_ids,
+        y: sample.sample_values,
+        text: sample.otu_labels,
+        mode: "markers",
+        marker: {
+            size: sample.sample_values,
+            color: sample.otu_ids,
+            colorscale: "Electric"
+        }
+    }];
+
+    // Layout for bubble chart
+    let layout = {
+        title: "OTU Frequency",
+        xaxis: { title: "OTU ID" },
+        yaxis: { title: "Sample Values" }
+    };
+
+    // Plot the bubble chart
+    Plotly.newPlot("bubble", trace, layout);
+};
+
+// Function to create to create sample metadata demographic information
+function executeMetadata(sampleId, data){
+    // Find if the users selection exactly matches the ID
+    let sampleMetadata = data.metadata.find(metadata => metadata.id === parseInt(sampleId));
+    
+
+}
+
+
+// Event listener for dropdown change
+function optionChanged(selectedSampleId) {
+    // Update the visuals with newly selected ID
+    d3.json(url).then(function(data) {
+        executeBar(selectedSampleId, data);
+        executeBubble(selectedSampleId, data);
+    });
+};
 
 
 
