@@ -9,7 +9,7 @@ function init() {
         // Ensure data was feteched
         console.log(data)
 
-        //set variable for sample names
+        // Set variable for sample names
         let IDs = data.names;
 
         // Populate the dropdown menu with sample IDs
@@ -23,7 +23,7 @@ function init() {
          // Set default sample as the first index in the array
          let defaultSample = IDs[0]; 
 
-         // Create initial horizontal bar chart, bubble chart and metadata panel
+         // Create initial horizontal bar chart, bubble chart and metadata panel executions 
         executeBar(defaultSample, data);
         executeBubble(defaultSample, data);
         executeMetadata(defaultSample, data);
@@ -44,7 +44,7 @@ function executeBar(sampleId,data){
     let otuLabels = sample.otu_labels.slice(0, 10).reverse();
 
     // Trace for bar horizontal bar chart
-    let trace = [{
+    let barTrace = [{
         x: sampleValues,
         y: otuIds,
         text: otuLabels, // Hover text
@@ -56,14 +56,14 @@ function executeBar(sampleId,data){
     }];
 
     // Layout for horizontal bar chart 
-    let layout = {
+    let barLayout = {
         title: "Top 10 OTUs Found in Individual",
         xaxis: {title: "Sample Values"},
         yaxis: {title: "OTU IDs"}
     };
 
     // Plot bar chart
-    Plotly.newPlot("bar",trace, layout)
+    Plotly.newPlot("bar",barTrace, barLayout)
 };
 
 // Function to create bubble chart that displays each sample selection
@@ -72,10 +72,10 @@ function executeBubble(sampleId, data) {
     let sample = data.samples.find(sample => sample.id === sampleId);
 
     // Trace for bubble chart
-    let trace = [{
+    let bubbleTrace = [{
         x: sample.otu_ids,
         y: sample.sample_values,
-        text: sample.otu_labels,
+        text: sample.otu_labels, // Hover text
         mode: "markers",
         marker: {
             size: sample.sample_values,
@@ -85,37 +85,41 @@ function executeBubble(sampleId, data) {
     }];
 
     // Layout for bubble chart
-    let layout = {
+    let bubbleLayout = {
         title: "OTU Frequency",
         xaxis: { title: "OTU ID" },
         yaxis: { title: "Sample Values" }
     };
 
     // Plot the bubble chart
-    Plotly.newPlot("bubble", trace, layout);
+    Plotly.newPlot("bubble", bubbleTrace, bubbleLayout);
 };
 
 // Function to create to create sample metadata demographic information
 function executeMetadata(sampleId, data){
     // Find if the users selection exactly matches the ID
-    let sampleMetadata = data.metadata.find(metadata => metadata.id === parseInt(sampleId));
-    
+    let sampleMetadata = data.metadata.find(metadata => metadata.id === parseInt(sampleId)); // Convert sampleId to integer for comparing to metadata.id
 
+    // Clear container with previous values before appending
+    let metadataContainer = d3.select("#sample-metadata");
+    metadataContainer.html("");
+
+    // Append each key and its value to the container at a new 'h5' or header
+    Object.entries(sampleMetadata).forEach(([key, value]) => {
+        metadataContainer.append("h5").text(`${key}: ${value}`); 
+    });
 }
 
 
 // Event listener for dropdown change
 function optionChanged(selectedSampleId) {
     // Update the visuals with newly selected ID
-    d3.json(url).then(function(data) {
+    d3.json(url).then(data => {
         executeBar(selectedSampleId, data);
         executeBubble(selectedSampleId, data);
+        executeMetadata(selectedSampleId, data);
     });
 };
-
-
-
-
 
 
 
