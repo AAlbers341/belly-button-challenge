@@ -1,4 +1,4 @@
-// Source url
+// Source url as const
 const url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
 
 
@@ -104,7 +104,7 @@ function executeMetadata(sampleId, data){
     let metadataContainer = d3.select("#sample-metadata");
     metadataContainer.html("");
 
-    // Append each key and its value to the container at a new 'h5' or header
+    // Append each key and its value to the container at a new 'h5' or header // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries
     Object.entries(sampleMetadata).forEach(([key, value]) => {
         metadataContainer.append("h5").text(`${key}: ${value}`); 
     });
